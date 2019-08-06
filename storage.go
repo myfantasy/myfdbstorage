@@ -73,7 +73,7 @@ func (s *Storage) StorageStructFlush(file string) error {
 		return ErrorNew("StorageStructFlush get json from struct", err)
 	}
 
-	err = ioutil.WriteFile(file, js, 660)
+	err = ioutil.WriteFile(file, js, 0660)
 	if err != nil {
 		return ErrorNew("StorageStructFlush write file", err)
 	}
