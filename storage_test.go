@@ -1,84 +1,66 @@
 package myfdbstorage
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
+	"time"
 )
 
-func TestStorageLoad(t *testing.T) {
+func TestTryGetString(t *testing.T) {
+	params := make(map[string]interface{})
 
-	s, err := StorageLoad([]byte("{}"))
+	params["tst"] = "tst"
 
-	if err != nil {
-		t.Fatalf("StorageLoad Fail")
-	}
+	var s string
 
-	err = s.AddTableI("tst", IStorageSimpleName, make(map[string]interface{}))
-	if err != nil {
-		t.Fatalf("AddTableI Fail")
+	if !TryGetString(params, "tst", &s) {
+		t.Fatalf("TryGetString Fail")
 	}
 
-	st, ok, err := s.IGetTable("tst")
-	if err != nil {
-		t.Fatalf("IGetTable Fail")
-	}
-	if !ok {
-		t.Fatalf("IGetTable table not exists Fail")
+	if s != "tst" {
+		t.Fatalf("TryGetString value Fail")
 	}
 
-	err = st.Set(IItemSimple{Key: 9, BData: []byte{12, 34, 45}})
-	if err != nil {
-		t.Fatalf("Set Fail")
+	if TryGetString(params, "tst2", &s) {
+		t.Fatalf("TryGetString 2 Fail")
+	}
+}
+
+func TestTryGetInt(t *testing.T) {
+	params := make(map[string]interface{})
+
+	params["tst"] = 5
+
+	var s int
+
+	if !TryGetInt(params, "tst", &s) {
+		t.Fatalf("TryGetInt Fail")
 	}
 
-	err = s.StorageStructFlush("st.tmp")
-	if err != nil {
-		t.Fatalf("StorageStructFlush Fail")
+	if s != 5 {
+		t.Fatalf("TryGetInt value Fail")
 	}
 
-	b, err := ioutil.ReadFile("st.tmp")
-	if err != nil {
-		t.Fatalf("ioutil.ReadFile Fail")
+	if TryGetInt(params, "tst2", &s) {
+		t.Fatalf("TryGetInt 2 Fail")
+	}
+}
+
+func TestTryGetDuration(t *testing.T) {
+	params := make(map[string]interface{})
+
+	params["tst"] = 5
+
+	var s time.Duration
+
+	if !TryGetDuration(params, "tst", &s) {
+		t.Fatalf("TryGetDuration Fail")
 	}
 
-	s2, err := StorageLoad(b)
-	if err != nil {
-		t.Fatalf("StorageLoad 2 Fail")
+	if s != 5 {
+		t.Fatalf("TryGetDuration value Fail")
 	}
 
-	err = os.Remove("st.tmp")
-	if err != nil {
-		t.Fatalf("os.Remove Fail")
+	if TryGetDuration(params, "tst2", &s) {
+		t.Fatalf("TryGetDuration 2 Fail")
 	}
-
-	st2, ok, err := s2.IGetTable("tst")
-	if err != nil {
-		t.Fatalf("IGetTable 2 Fail")
-	}
-	if !ok {
-		t.Fatalf("IGetTable 2 table not exists Fail")
-	}
-
-	err = st2.Set(IItemSimple{Key: 9, BData: []byte{12, 34, 45}})
-	if err != nil {
-		t.Fatalf("Set 2 Fail")
-	}
-
-	ok, err = s.DropTableI("tst")
-	if err != nil {
-		t.Fatalf("DropTableI Fail")
-	}
-	if !ok {
-		t.Fatalf("DropTableI table not exists Fail")
-	}
-
-	ok, err = s.DropTableI("tst")
-	if err != nil {
-		t.Fatalf("DropTableI 2 Fail")
-	}
-	if ok {
-		t.Fatalf("DropTableI 2 table exists Fail")
-	}
-
 }

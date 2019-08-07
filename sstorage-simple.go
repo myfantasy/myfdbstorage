@@ -5,57 +5,57 @@ import (
 	"time"
 )
 
-// IStorageSimpleName type
-const IStorageSimpleName = "simple"
+// SStorageSimpleName type
+const SStorageSimpleName = "simple"
 
-// IItemSimple - simple kv item key int64
-type IItemSimple struct {
-	Key   int64
+// SItemSimple - simple kv item key string
+type SItemSimple struct {
+	Key   string
 	BData []byte
 }
 
 // ID - uniqe object identity
-func (i IItemSimple) ID() int64 {
+func (i SItemSimple) ID() string {
 	return i.Key
 }
 
 // Data - object data
-func (i IItemSimple) Data() []byte {
+func (i SItemSimple) Data() []byte {
 	return i.BData
 }
 
 // FullData - all data without ID neaded for restore object
-func (i IItemSimple) FullData() []byte {
+func (i SItemSimple) FullData() []byte {
 	return i.BData
 }
 
-// IItemSimpleGenerate generate IItemSimple from any IItem contains all data for restore
-func IItemSimpleGenerate(item IItem) IItemSimple {
+// SItemSimpleGenerate generate SItemSimple from any SItem contains all data for restore
+func SItemSimpleGenerate(item SItem) SItemSimple {
 
-	t, ok := item.(IItemSimple)
+	t, ok := item.(SItemSimple)
 	if ok {
 		return t
 	}
 
-	res := IItemSimple{Key: item.ID(), BData: item.FullData()}
+	res := SItemSimple{Key: item.ID(), BData: item.FullData()}
 	return res
 }
 
-// IItemSimpleConvertTo generate IItemSimple from any IItem contains only Data()
-func IItemSimpleConvertTo(item IItem) IItemSimple {
+// SItemSimpleConvertTo generate SItemSimple from any SItem contains only Data()
+func SItemSimpleConvertTo(item SItem) SItemSimple {
 
-	t, ok := item.(IItemSimple)
+	t, ok := item.(SItemSimple)
 	if ok {
 		return t
 	}
 
-	res := IItemSimple{Key: item.ID(), BData: item.Data()}
+	res := SItemSimple{Key: item.ID(), BData: item.Data()}
 	return res
 }
 
-// IStorageSimple - simple kv storage key int64
-type IStorageSimple struct {
-	Data map[int64]IItem
+// SStorageSimple - simple kv storage key string
+type SStorageSimple struct {
+	Data map[string]SItem
 	mx   sync.RWMutex
 
 	DumpPath      string
@@ -65,9 +65,9 @@ type IStorageSimple struct {
 	mxDump        sync.Mutex
 }
 
-// IStorageSimpleLoad load or create simple storage
-func IStorageSimpleLoad(params map[string]interface{}) (*IStorageSimple, error) {
-	s := &IStorageSimple{Data: make(map[int64]IItem)}
+// SStorageSimpleLoad load or create simple storage
+func SStorageSimpleLoad(params map[string]interface{}) (*SStorageSimple, error) {
+	s := &SStorageSimple{Data: make(map[string]SItem)}
 
 	TryGetString(params, "dump_path", &(s.DumpPath))
 	TryGetDuration(params, "dump_timeout", &(s.DumpTimeout))
@@ -101,7 +101,7 @@ func IStorageSimpleLoad(params map[string]interface{}) (*IStorageSimple, error) 
 }
 
 // Exists item
-func (s *IStorageSimple) Exists(key int64) (ok bool, err error) {
+func (s *SStorageSimple) Exists(key string) (ok bool, err error) {
 	s.mx.RLock()
 	_, ok = s.Data[key]
 	s.mx.RUnlock()
@@ -109,7 +109,7 @@ func (s *IStorageSimple) Exists(key int64) (ok bool, err error) {
 }
 
 // Get item
-func (s *IStorageSimple) Get(key int64) (itm IItem, ok bool, err error) {
+func (s *SStorageSimple) Get(key string) (itm SItem, ok bool, err error) {
 	s.mx.RLock()
 	itm, ok = s.Data[key]
 	s.mx.RUnlock()
@@ -117,7 +117,7 @@ func (s *IStorageSimple) Get(key int64) (itm IItem, ok bool, err error) {
 }
 
 // Set - Insert or update item
-func (s *IStorageSimple) Set(itm IItem) (err error) {
+func (s *SStorageSimple) Set(itm SItem) (err error) {
 	s.mx.Lock()
 	s.ExistsChanges = true
 	s.Data[itm.ID()] = itm
@@ -126,7 +126,7 @@ func (s *IStorageSimple) Set(itm IItem) (err error) {
 }
 
 // Del - delete item
-func (s *IStorageSimple) Del(key int64) (exists bool, err error) {
+func (s *SStorageSimple) Del(key string) (exists bool, err error) {
 	s.mx.Lock()
 	s.ExistsChanges = true
 	_, exists = s.Data[key]
@@ -138,12 +138,12 @@ func (s *IStorageSimple) Del(key int64) (exists bool, err error) {
 }
 
 // Type Storage for restore
-func (s *IStorageSimple) Type() string {
-	return IStorageSimpleName
+func (s *SStorageSimple) Type() string {
+	return SStorageSimpleName
 }
 
 // Params Storage for restore
-func (s *IStorageSimple) Params() map[string]interface{} {
+func (s *SStorageSimple) Params() map[string]interface{} {
 	params := make(map[string]interface{})
 
 	params["dump_path"] = s.DumpPath
@@ -153,7 +153,7 @@ func (s *IStorageSimple) Params() map[string]interface{} {
 }
 
 // Flush changes into storages
-func (s *IStorageSimple) Flush() error {
+func (s *SStorageSimple) Flush() error {
 	if s.DumpPath != "" {
 		err := s.FlushOnDisk()
 		return err
@@ -163,7 +163,7 @@ func (s *IStorageSimple) Flush() error {
 }
 
 // ClearAndDeleteStorage table clear and then delete from storage
-func (s *IStorageSimple) ClearAndDeleteStorage() error {
+func (s *SStorageSimple) ClearAndDeleteStorage() error {
 	if s.DumpPath != "" {
 		s.DumpStop = true
 		err := s.ClearFromDisk()

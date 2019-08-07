@@ -6,23 +6,23 @@ import (
 	"time"
 )
 
-func TestSet(t *testing.T) {
-	s, err := IStorageCreate("simple", nil)
+func STTestSet(t *testing.T) {
+	s, err := SStorageCreate("simple", nil)
 	if err != nil {
-		t.Fatalf("IStorageCreate Fail")
+		t.Fatalf("SStorageCreate Fail")
 	}
 
-	err = s.Set(IItemSimple{Key: 9, BData: []byte{12, 34, 45}})
+	err = s.Set(SItemSimple{Key: "9", BData: []byte{12, 34, 45}})
 	if err != nil {
 		t.Fatalf("Set Fail")
 	}
 
-	err = s.Set(IItemSimple{Key: 9, BData: []byte{12, 34, 45}})
+	err = s.Set(SItemSimple{Key: "9", BData: []byte{12, 34, 45}})
 	if err != nil {
 		t.Fatalf("Set2 Fail")
 	}
 
-	ok, err := s.Exists(9)
+	ok, err := s.Exists("9")
 	if err != nil {
 		t.Fatalf("Exists Fail")
 	}
@@ -30,7 +30,7 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Exists Fail ok")
 	}
 
-	i, ok, err := s.Get(9)
+	i, ok, err := s.Get("9")
 	if err != nil {
 		t.Fatalf("Get Fail")
 	}
@@ -41,7 +41,7 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Get Fail Data")
 	}
 
-	exists, err := s.Del(9)
+	exists, err := s.Del("9")
 	if err != nil {
 		t.Fatalf("Del Fail")
 	}
@@ -49,7 +49,7 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Del Fail Exists")
 	}
 
-	exists, err = s.Del(9)
+	exists, err = s.Del("9")
 	if err != nil {
 		t.Fatalf("Del2 Fail")
 	}
@@ -57,7 +57,7 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Del2 Fail Exists")
 	}
 
-	ok, err = s.Exists(9)
+	ok, err = s.Exists("9")
 	if err != nil {
 		t.Fatalf("Exists2 Fail")
 	}
@@ -65,7 +65,7 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Exists2 Fail ok")
 	}
 
-	_, ok, err = s.Get(9)
+	_, ok, err = s.Get("9")
 	if err != nil {
 		t.Fatalf("Get2 Fail")
 	}
@@ -74,24 +74,24 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestSet2(t *testing.T) {
+func STTestSet2(t *testing.T) {
 
 	params := make(map[string]interface{})
 
 	params["dump_path"] = "tmp/"
 	params["dump_timeout"] = time.Second
 
-	s, err := IStorageCreate("simple", params)
+	s, err := SStorageCreate("simple", params)
 	if err != nil {
-		t.Fatalf("IStorageCreate Fail, %s", err.Error())
+		t.Fatalf("SStorageCreate Fail, %s", err.Error())
 	}
 
-	err = s.Set(IItemSimple{Key: 9, BData: []byte{12, 34, 45}})
+	err = s.Set(SItemSimple{Key: "9", BData: []byte{12, 34, 45}})
 	if err != nil {
 		t.Fatalf("Set Fail, %s", err.Error())
 	}
 
-	err = s.Set(IItemSimple{Key: 12, BData: []byte{13, 25, 46}})
+	err = s.Set(SItemSimple{Key: "12", BData: []byte{13, 25, 46}})
 	if err != nil {
 		t.Fatalf("Set2 Fail, %s", err.Error())
 	}
@@ -101,12 +101,12 @@ func TestSet2(t *testing.T) {
 		t.Fatalf("Flush Fail, %s", err.Error())
 	}
 
-	s2, err := IStorageCreate("simple", params)
+	s2, err := SStorageCreate("simple", params)
 	if err != nil {
-		t.Fatalf("IStorageCreate 2 Fail, %s", err.Error())
+		t.Fatalf("SStorageCreate 2 Fail, %s", err.Error())
 	}
 
-	i, ok, err := s2.Get(9)
+	i, ok, err := s2.Get("9")
 	if err != nil {
 		t.Fatalf("Get Fail, %s", err.Error())
 	}

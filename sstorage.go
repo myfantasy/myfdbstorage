@@ -2,12 +2,12 @@ package myfdbstorage
 
 import "errors"
 
-// IStorageGenerates funcs for generate storage
-var IStorageGenerates map[string]func(params map[string]interface{}) (IStorage, error)
+// SStorageGenerates funcs for generate storage
+var SStorageGenerates map[string]func(params map[string]interface{}) (SStorage, error)
 
-// IStorageCreate create instance
-func IStorageCreate(t string, params map[string]interface{}) (IStorage, error) {
-	f, ok := IStorageGenerates[t]
+// SStorageCreate create instance
+func SStorageCreate(t string, params map[string]interface{}) (SStorage, error) {
+	f, ok := SStorageGenerates[t]
 	if ok {
 		s, err := f(params)
 		return s, err
@@ -17,16 +17,16 @@ func IStorageCreate(t string, params map[string]interface{}) (IStorage, error) {
 
 }
 
-// IStorage - int64 kv storage
-type IStorage interface {
+// SStorage - string kv storage
+type SStorage interface {
 	// Exists item
-	Exists(key int64) (ok bool, err error)
+	Exists(key string) (ok bool, err error)
 	// Get item
-	Get(key int64) (itm IItem, ok bool, err error)
+	Get(key string) (itm SItem, ok bool, err error)
 	// Set - Insert or update item
-	Set(itm IItem) (err error)
+	Set(itm SItem) (err error)
 	// Del - delete item
-	Del(key int64) (exists bool, err error)
+	Del(key string) (exists bool, err error)
 
 	// Type Storage for restore
 	Type() string
@@ -38,10 +38,10 @@ type IStorage interface {
 	ClearAndDeleteStorage() error
 }
 
-// IItem - int64 kv item
-type IItem interface {
+// SItem - string kv item
+type SItem interface {
 	// ID - uniqe object identity
-	ID() int64
+	ID() string
 	// Data - object data
 	Data() []byte
 
