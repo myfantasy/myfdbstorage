@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func STTestSet(t *testing.T) {
+func TestSTSet(t *testing.T) {
 	s, err := SStorageCreate("simple", nil)
 	if err != nil {
 		t.Fatalf("SStorageCreate Fail")
@@ -74,7 +74,7 @@ func STTestSet(t *testing.T) {
 	}
 }
 
-func STTestSet2(t *testing.T) {
+func TestSTSet2(t *testing.T) {
 
 	params := make(map[string]interface{})
 

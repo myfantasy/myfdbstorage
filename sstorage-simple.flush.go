@@ -22,7 +22,7 @@ func (s *SStorageSimple) FlushOnDisk() error {
 		return ErrorNew("FlushOnDisk Check directory "+s.DumpPath, err)
 	}
 	if !ok {
-		err = os.Mkdir(s.DumpPath, 0760)
+		err = os.MkdirAll(s.DumpPath, 0760)
 		if err != nil {
 			return ErrorNew("FlushOnDisk Mkdir file "+s.DumpPath, err)
 		}
@@ -60,7 +60,10 @@ func (s *SStorageSimple) FlushOnDisk() error {
 	var gdata bytes.Buffer
 	enc := gob.NewEncoder(&gdata)
 
-	enc.Encode(ss)
+	err = enc.Encode(ss)
+	if err != nil {
+		return ErrorNew("Encode data for file "+fileName, err)
+	}
 
 	err = ioutil.WriteFile(fileName, gdata.Bytes(), 0660)
 	if err != nil {
